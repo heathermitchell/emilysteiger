@@ -6,6 +6,21 @@
 <title>Emily Steiger — The Crimson Swords</title>
 <meta name="description" content="The Crimson Swords by E. Steiger — a dark martial-arts fantasy of brotherhood, destiny, and the Demon Lord who returns every hundred years.">
 
+<!-- Social share preview (Open Graph + Twitter Card) — the image that appears when the link is pasted anywhere -->
+<meta property="og:type" content="book">
+<meta property="og:site_name" content="The Crimson Swords">
+<meta property="og:title" content="The Crimson Swords — a novel by E. Steiger">
+<meta property="og:description" content="Every hundred years, the Demon Lord returns. Only the twin Crimson Swords can end him — and two brothers carry them.">
+<meta property="og:url" content="https://emilysteiger.com/">
+<meta property="og:image" content="https://emilysteiger.com/assets/scenes/bridge.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="750">
+<meta property="og:image:alt" content="A robed sage with a guandao on an ancient stone bridge over a misty ravine — the path of destiny.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Crimson Swords — a novel by E. Steiger">
+<meta name="twitter:description" content="Every hundred years, the Demon Lord returns. Only the twin Crimson Swords can end him — and two brothers carry them.">
+<meta name="twitter:image" content="https://emilysteiger.com/assets/scenes/bridge.png">
+
 <!-- Fonts: Cinzel (inscriptional display) + EB Garamond (literary body). Degrades to serif if blocked. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -95,7 +110,7 @@
      content so it never cuts through the writing or between the brothers. */
   .spine{
     position:fixed; top:0; left:50%; transform:translateX(-50%);
-    width:2px; height:26vh; z-index:2; pointer-events:none;
+    width:2px; height:26vh; z-index:0; pointer-events:none;
     background:linear-gradient(to bottom, var(--blade) 0%, var(--dried) 55%, transparent 100%);
     opacity:.0; transition:opacity .8s ease, box-shadow .8s ease;
   }
@@ -189,6 +204,11 @@
     position:relative;
   }
   .char .art .glyph{ font-family:var(--display); font-weight:900; font-size:3.4rem; color:rgba(231,222,208,.14); letter-spacing:.05em; }
+  /* Real portrait: cover image + gentle bottom scrim toward the card body */
+  .char .art.has-portrait{ background:var(--sumi); }
+  .char .art.has-portrait img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center 18%; z-index:0; transition:transform 1.2s cubic-bezier(.2,.7,.2,1); }
+  .char:hover .art.has-portrait img{ transform:scale(1.04); }
+  .char .art.has-portrait::after{ content:""; position:absolute; inset:0; z-index:1; pointer-events:none; background:linear-gradient(180deg, rgba(10,7,8,0) 55%, rgba(10,7,8,.55) 100%); }
   .char .body{ padding:1.5rem 1.5rem 1.9rem; }
   .char h3{ color:var(--bone) }
   .char .role{ font-family:var(--display); font-size:.62rem; letter-spacing:.24em; text-transform:uppercase; color:var(--gold); margin:.5rem 0 1rem; }
@@ -211,13 +231,22 @@
     z-index:0; transition:transform 1.2s cubic-bezier(.2,.7,.2,1);
   }
   .scene.has-art:hover img{ transform:scale(1.045); }
+  /* Scrim + text hidden by default — clean image; fade up on hover (or focus, for keyboard). */
   .scene.has-art::after{
     content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
     background:linear-gradient(180deg, rgba(10,7,8,.05) 0%, rgba(10,7,8,.18) 45%, rgba(10,7,8,.82) 100%);
+    opacity:0; transition:opacity .5s ease;
   }
-  .scene .cap{ font-family:var(--body); font-size:1.02rem; color:var(--bone); max-width:34ch; position:relative; z-index:2; text-shadow:0 2px 12px rgba(0,0,0,.85); }
-  .scene .num{ position:absolute; top:1rem; left:1.3rem; z-index:2; font-family:var(--display); font-weight:700; font-size:.72rem; letter-spacing:.2em; color:var(--gold); text-shadow:0 2px 10px rgba(0,0,0,.9); }
+  .scene.has-art:hover::after, .scene.has-art:focus-within::after{ opacity:1; }
+  .scene .cap{ font-family:var(--body); font-size:1.02rem; color:var(--bone); max-width:34ch; position:relative; z-index:2; text-shadow:0 2px 12px rgba(0,0,0,.85); opacity:0; transform:translateY(8px); transition:opacity .5s ease, transform .5s ease; }
+  .scene.has-art:hover .cap, .scene.has-art:focus-within .cap{ opacity:1; transform:none; }
+  .scene .num{ position:absolute; top:1rem; left:1.3rem; z-index:2; font-family:var(--display); font-weight:700; font-size:.72rem; letter-spacing:.2em; color:var(--gold); text-shadow:0 2px 10px rgba(0,0,0,.9); opacity:0; transition:opacity .5s ease; }
+  .scene.has-art:hover .num, .scene.has-art:focus-within .num{ opacity:1; }
   .scene .ph{ position:absolute; top:1rem; right:1.3rem; z-index:2; font-family:var(--display); font-size:.55rem; letter-spacing:.2em; text-transform:uppercase; color:var(--ember); opacity:.7; }
+  /* Placeholder scenes (no art): keep num + caption always visible so they don't look empty. */
+  .scene:not(.has-art) .cap{ opacity:1; transform:none; }
+  .scene:not(.has-art) .num{ opacity:1; }
+  @media (prefers-reduced-motion: reduce){ .scene .cap, .scene .num, .scene.has-art::after{ transition:none } }
 
   /* ---------- World band ---------- */
   .world{ text-align:center; padding-block:clamp(3.5rem,7vw,6rem); }
@@ -325,25 +354,34 @@
       <div class="char-grid">
 
         <article class="char">
-          <div class="art"><span class="glyph">壱</span></div>
+          <div class="art has-portrait"><img src="assets/char-jidori.png" alt="Jidori — a young warrior with green eyes and choppy black hair, in a black school uniform"></div>
           <div class="body">
             <h3>Jidori</h3>
             <p class="role">Crimson Dragons School</p>
-            <p>One of Kanton's brightest warriors. He can see the land's dark future clearly — and he must convince his brother that the stories they once mocked are warnings, not myths.</p>
+            <p>The elder brother — green-eyed, his black hair choppy and unruly. One of Kanton's brightest warriors, he can see the land's dark future clearly, and he must convince his brother that the stories they once mocked are warnings, not myths.</p>
           </div>
         </article>
 
         <article class="char">
-          <div class="art"><span class="glyph">弐</span></div>
+          <div class="art has-portrait"><img src="assets/char-rane.png" alt="Rane — a young warrior with blue eyes and long black hair, in a black school uniform"></div>
           <div class="body">
             <h3>Rane</h3>
             <p class="role">Crimson Dragons School</p>
-            <p>A warrior reeling from heartbreaking loss and the first sparks of unexpected love — doubting he has the strength for a quest that could cost everything.</p>
+            <p>Blue-eyed, his long black hair worn loose. A warrior reeling from heartbreaking loss and the first sparks of unexpected love — doubting he has the strength for a quest that could cost everything.</p>
+          </div>
+        </article>
+
+        <article class="char">
+          <div class="art has-portrait"><img src="assets/char-taki.png" alt="Taki — a young woman with long black hair and dark almond eyes, in a peach silk kimono"></div>
+          <div class="body">
+            <h3>Taki</h3>
+            <p class="role">Of the Eastlands — Golden Phoenix School</p>
+            <p>Dark almond eyes and long black hair, a peach silk kimono over a warrior's resolve. Graceful and self-possessed — with steel beneath the silk.</p>
           </div>
         </article>
 
       </div>
-      <p style="margin-top:2rem; color:var(--bone-dim); font-style:italic; font-size:1rem;">The two brothers at the heart of the story. More of Kanton's cast to come. <span class="placeholder-note">&nbsp;more to come</span></p>
+      <p style="margin-top:2rem; color:var(--bone-dim); font-style:italic; font-size:1rem;">The heart of the story — drawn from the book. More of Kanton's cast to come.</p>
     </div>
   </section>
 
@@ -357,11 +395,16 @@
       <p style="margin-top:1rem">Candidate scenes to render as artwork — the images that will carry the mood of the site. Final selections chosen with Emily.</p>
       <div class="scene-grid">
         <div class="scene has-art"><img src="assets/scenes/temple.png" alt="The Great Temple of Guan Kung rising through mountain mist"><span class="num">I</span><span class="cap">The Great Temple of Guan Kung — ebony walls and jade tiles rising through the mist of the Loung Shi Mountains.</span></div>
-        <div class="scene has-art"><img src="assets/scenes/swords.png" alt="The twin Crimson Swords crossed, glowing red in the dark"><span class="num">II</span><span class="cap">The twin Crimson Swords — mythical blades said to sever immortality itself.</span></div>
-        <div class="scene has-art"><img src="assets/scenes/bridge.png" alt="A robed sage with a guandao on an ancient stone bridge over a misty ravine"><span class="num">III</span><span class="cap">The path of destiny — "there are days the path is narrow and long, seemingly impassable."</span></div>
-        <div class="scene"><span class="num">IV</span><span class="ph">art tbd</span><span class="cap">Khelle rises — the hundred-year turn, the dark made flesh.</span></div>
+        <div class="scene has-art"><img src="assets/scenes/bridge.png" alt="A robed sage with a guandao on an ancient stone bridge over a misty ravine"><span class="num">II</span><span class="cap">The path of destiny — "there are days the path is narrow and long, seemingly impassable."</span></div>
+        <div class="scene has-art"><img src="assets/scenes/night-camp.png" alt="A lone traveler beside a small campfire on a misty mountainside beneath a crescent moon"><span class="num">III</span><span class="cap">A breath of peace — dusk drapes its satiny blanket across the mountainside, moonlight rippling like quicksilver along the brook.</span></div>
+        <div class="scene has-art"><img src="assets/scenes/river-rescue.png" alt="One brother, roped to a tree, wades into a storm-swollen river to pull his unconscious brother from the current"><span class="num">IV</span><span class="cap">The river rescue — Jidori ropes himself to a tree and wades into the flood to pull Rane from the current.</span></div>
+        <div class="scene has-art"><img src="assets/scenes/twin-blades.png" alt="A warrior raises a sword bleeding brilliant crimson light in a dark throne room as a demon general recoils"><span class="num">V</span><span class="cap">The blade ignites — crimson light bleeds down the Damascus steel, and the demon shields his eyes from its glow.</span></div>
+        <div class="scene has-art"><img src="assets/scenes/taki-warrior.png" alt="Taki rides a golden palomino into battle in a golden tunic with a black sash"><span class="num">VI</span><span class="cap">Taki rides to battle — golden silk and a black sash, armed and unafraid.</span></div>
+        <!-- HIDDEN until Heather provides Khelle's description — bring back when ready:
+        <div class="scene"><span class="num">VII</span><span class="ph">art tbd</span><span class="cap">Khelle rises — the hundred-year turn, the dark made flesh.</span></div>
+        -->
       </div>
-      <p style="margin-top:2rem; color:var(--bone-dim); font-style:italic; font-size:1rem;">These first scenes are how I pictured them from your words — the real magic is you telling me what's different from how <em>you</em> see them, and we'll remake them to match. <span class="placeholder-note">&nbsp;your vision, next</span></p>
+      <p style="margin-top:2rem; color:var(--bone-dim); font-style:italic; font-size:1rem;">These scenes are how I pictured them from the book — the real magic is you telling me what's different from how <em>you</em> see them, and we'll remake them to match. <span class="placeholder-note">&nbsp;your vision, next</span></p>
     </div>
   </section>
 
